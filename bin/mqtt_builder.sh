@@ -1,16 +1,19 @@
 #!/bin/bash
 
 thisDir=$(pwd)
+scriptDir=$(dirname $0)
+scriptFile=$(basename $0)
+[[ -f "/${scriptDir}/${scriptFile}" ]] || scriptDir="${thisDir}/${scriptDir}"
+
 readonly export repoUrl="git@bitbucket.org:test/deviceclient.git"
 
-. _common_functions.sh
+. "${scriptDir}/_common_functions.sh"
 
 function show_usage (){
-    echo "Usage:
-    $0 --workspace <path-to-clone-and-build> --build_openssl --build_curl --device_cert <string|file-path> --private_key <string|file-path> --ca_cert <string|file-path>
+    echo "Usage: 
+    $0 --workspace <path> --build_openssl --build_curl --device_cert <string|path> --private_key <string|path> --ca_cert <string|path>
 
 Note: curl and openssl are not built by default
-
 "
     exit 127
 }
