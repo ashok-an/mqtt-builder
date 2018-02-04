@@ -1,0 +1,4 @@
+
+static unsigned char dev_cert[] = "__DEV_CERT_HERE__";
+static unsigned char dev_private_key[] = "__PRIVATE_KEY_HERE__";
+static unsigned char ca_cert[] = "__CA_CERT_HERE__";
