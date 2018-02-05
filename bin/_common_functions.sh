@@ -30,16 +30,20 @@ function create_header_file (){
     local targetDir=$4
 
     info "Updating ${targetDir}/cert.h ..."
-
-    [[ "${deviceCert}" ]] || die "No value passed for \"dev_cert\""
-    [[ "${privateKey}" ]] || die "No value passed for \"dev_private_key\""
-    [[ "${caCert}" ]] || die "No value passed for \"ca_cert\""
-    [[ -d "${targetDir}" ]] || die "Target directory \"$targetDir\" does not exist"
-    [[ -f "cert.h.template" ]] || die "Unable to locate cert.h.template under $(pwd)"
-    
-    sed -e "s/__DEV_CERT_HERE__/${deviceCert}/"    \
-        -e "s/__PRIVATE_KEY_HERE__/${privateKey}/" \
-        -e "s/__CA_CERT_HERE__/${caCert}/" cert.h.template > ${targetDir}/cert.h
+    (
+        echo "static unsigned char dev_cert[] = \"\\n\\"
+        cat ${deviceCert} | tr "\n" "\\n\\"
+        echo "\\n\";"
+        echo
+        echo "static unsigned char dev_private_key[] = \"\\n\\"
+        cat ${privateKey} | tr "\n" "\\n\\"
+        echo "\\n\";"
+        echo
+        echo "static unsigned char ca_cert[] = \"\\n\\"
+        cat ${caCert} | tr "\n" "\\n\\"
+        echo "\\n\";"
+        echo
+    ) >${targetDir}/cert.h
 }
 
 function build_arm_openssl_curl (){

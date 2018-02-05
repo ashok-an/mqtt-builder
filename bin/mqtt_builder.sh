@@ -11,7 +11,7 @@ readonly export repoUrl="git@bitbucket.org:test/deviceclient.git"
 
 function show_usage (){
     echo "Usage: 
-    $0 --workspace <path> --build_openssl --build_curl --device_cert <string|path> --private_key <string|path> --ca_cert <string|path>
+    $0 --workspace <path> --build_openssl --build_curl --device_cert <path> --private_key <path> --ca_cert <path>
 
 Note: curl and openssl are not built by default
 "
@@ -19,7 +19,7 @@ Note: curl and openssl are not built by default
 }
 
 ## MAIN
-[[ $# -eq 10 ]] || show_usage
+[[ $# -lt 8 ]] && show_usage
 while [[ $# -gt 0 ]]; do
 case "$1" in
     "--workspace"     ) export workspacePath=$2 ; shift 2 ;;
@@ -38,9 +38,9 @@ mkdir -p ${ROOT_DIR}
 git_clone $repoUrl ${ROOT_DIR}
 
 ## read the file-content
-[[ -f "${deviceCert}" ]] && deviceCert="$(< ${deviceCdert})"
-[[ -f "${privateKey}" ]] && privateKey="$(< ${deviceCdert})"
-[[ -f "${caCert}" ]] && caCert="$(< ${deviceCdert})"
+[[ -f "${deviceCert}" ]] || die "Unable to read --device_cert:${deviceCert}"
+[[ -f "${privateKey}" ]] || die "Unable to read --private_key:${privateKey}"
+[[ -f "${caCert}" ]] || die "Unable to read --ca_cert:${caCert}"
 
 create_header_file $deviceCert $privateKey $caCert "${ROOT_DIR}/device/src"
 build_arm_openssl_curl $ROOT_DIR $buildLibraries
