@@ -31,11 +31,17 @@ function create_header_file (){
 
     info "Updating ${targetDir}/cert.h ..."
     (
-        echo "static unsigned char dev_cert[] = \"$(cat -- "${deviceCert}")\";"
+        echo "static unsigned char dev_cert[] = \"\\"
+        sed 's/$/\\/' ${deviceCert}
+        echo "\";"
         echo
-        echo "static unsigned char dev_private_key[] = \"$(cat -- "${privateKey}")\";"
+        echo "static unsigned char dev_private_key[] = \"\\"
+        sed 's/$/\\/' ${privateKey}
+        echo "\";"
         echo
-        echo "static unsigned char ca_cert[] = \"$(cat -- "${caCert}")\";"
+        echo "static unsigned char ca_cert[] = \"\\"
+        sed 's/$/\\/' ${caCert}
+        echo "\";"
         echo
     ) >${targetDir}/cert.h
 }
@@ -53,7 +59,7 @@ function build_arm_openssl_curl (){
     if echo ${librariesToBuild} | grep -qs "openssl"; then
         info "Building arm-openssl ..."
         pushd ${INSTALL_DIR}/../src/openssl &>/dev/null || die "Unable to cd ${INSTALL_DIR}/../src/openssl"
-            ./configure linux-generic32 disable-shared --prefix=${INSTALL_DIR} --openssldir=${INSTALL_DIR}/openssl --cross-compile-prefix=${CROSSCOMP_DIR}/arm-linux-gnueabihf-  || die "configure failed"
+            ./Configure linux-generic32 disable-shared --prefix=${INSTALL_DIR} --openssldir=${INSTALL_DIR}/openssl --cross-compile-prefix=${CROSSCOMP_DIR}/arm-linux-gnueabihf-  || die "configure failed"
             make || die "make failed"
             make install || die "make install failed"     
         popd &>/dev/null 
