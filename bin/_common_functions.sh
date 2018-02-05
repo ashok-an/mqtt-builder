@@ -31,17 +31,11 @@ function create_header_file (){
 
     info "Updating ${targetDir}/cert.h ..."
     (
-        echo "static unsigned char dev_cert[] = \"\\n\\"
-        cat ${deviceCert} | tr "\n" "\\n\\"
-        echo "\\n\";"
+        echo "static unsigned char dev_cert[] = \"$(cat -- "${deviceCert}")\";"
         echo
-        echo "static unsigned char dev_private_key[] = \"\\n\\"
-        cat ${privateKey} | tr "\n" "\\n\\"
-        echo "\\n\";"
+        echo "static unsigned char dev_private_key[] = \"$(cat -- "${privateKey}")\";"
         echo
-        echo "static unsigned char ca_cert[] = \"\\n\\"
-        cat ${caCert} | tr "\n" "\\n\\"
-        echo "\\n\";"
+        echo "static unsigned char ca_cert[] = \"$(cat -- "${caCert}")\";"
         echo
     ) >${targetDir}/cert.h
 }
